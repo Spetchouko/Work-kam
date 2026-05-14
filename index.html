@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work-Kam | Plateforme de Placement du Personnel</title>
+    <meta name="description" content="Work-Kam est la plateforme web de placement du personnel dédiée au marché camerounais. Trouvez votre prochain emploi ou recrutez les meilleurs talents.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Header / Navigation -->
+    <header class="navbar">
+        <div class="container nav-container">
+            <div class="logo" onclick="app.navigate('home')">
+                <i class="fa-solid fa-briefcase"></i> Work-Kam
+            </div>
+            <button class="mobile-toggle" id="mobileToggle"><i class="fa-solid fa-bars"></i></button>
+            <nav class="nav-links" id="navLinks">
+                <a href="#" onclick="app.navigate('home')">Accueil</a>
+                <a href="#" onclick="app.navigate('jobs')">Offres d'emploi</a>
+                <a href="#" onclick="app.navigate('companies')">Entreprises</a>
+                <div class="nav-auth" id="navAuth">
+                    <!-- Dynamic auth links -->
+                    <button class="btn btn-outline" onclick="app.navigate('auth')">Connexion</button>
+                    <button class="btn btn-primary" onclick="app.navigate('auth')">S'inscrire</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main id="app-container">
+
+        <!-- VIEW: Home -->
+        <section id="view-home" class="view active">
+            <!-- Hero -->
+            <div class="hero">
+                <div class="container hero-content">
+                    <h1>Le recrutement au Cameroun, <span>réinventé</span>.</h1>
+                    <p>Mise en relation directe entre les meilleurs talents et les entreprises dynamiques. Simple, rapide et sécurisé.</p>
+                    <div class="hero-cta">
+                        <button class="btn btn-primary btn-large" onclick="app.navigate('jobs')">Trouver un emploi</button>
+                        <button class="btn btn-outline btn-large" onclick="app.navigate('auth', {type: 'entreprise'})">Recruter</button>
+                    </div>
+                </div>
+                <div class="hero-stats container">
+                    <div class="stat-card">
+                        <h3 id="stat-offres">0</h3>
+                        <p>Offres Actives</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="stat-candidats">0</h3>
+                        <p>Candidats Inscrits</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="stat-entreprises">0</h3>
+                        <p>Entreprises</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comment ça marche -->
+            <div class="section light-bg">
+                <div class="container">
+                    <h2 class="section-title">Comment ça marche ?</h2>
+                    <div class="steps-grid">
+                        <div class="step-card">
+                            <div class="step-icon"><i class="fa-solid fa-user-plus"></i></div>
+                            <h3>1. Créez votre profil</h3>
+                            <p>Inscrivez-vous en 2 minutes et mettez en valeur vos compétences et votre expérience.</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-icon"><i class="fa-solid fa-search"></i></div>
+                            <h3>2. Trouvez des offres</h3>
+                            <p>Explorez les opportunités qui correspondent à votre profil et vos ambitions.</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-icon"><i class="fa-solid fa-paper-plane"></i></div>
+                            <h3>3. Postulez en 1 clic</h3>
+                            <p>Envoyez votre candidature instantanément et suivez son avancement en temps réel.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Offres Récentes -->
+            <div class="section">
+                <div class="container">
+                    <div class="section-header">
+                        <h2 class="section-title">Offres Récentes</h2>
+                        <a href="#" onclick="app.navigate('jobs')" class="link-primary">Voir toutes les offres <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                    <div class="jobs-grid" id="home-jobs-container">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: Jobs List -->
+        <section id="view-jobs" class="view">
+            <div class="page-header">
+                <div class="container">
+                    <h1>Trouvez votre prochain défi</h1>
+                    <div class="search-bar">
+                        <input type="text" id="job-search" placeholder="Mot-clé, titre, entreprise...">
+                        <select id="job-location">
+                            <option value="">Toutes les villes</option>
+                            <!-- Populated by JS -->
+                        </select>
+                        <select id="job-sector">
+                            <option value="">Tous les secteurs</option>
+                            <!-- Populated by JS -->
+                        </select>
+                        <button class="btn btn-primary" onclick="app.filterJobs()"><i class="fa-solid fa-search"></i> Rechercher</button>
+                    </div>
+                </div>
+            </div>
+            <div class="container layout-sidebar">
+                <aside class="sidebar">
+                    <div class="filter-group">
+                        <h3>Type de contrat</h3>
+                        <div id="filter-contracts">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </aside>
+                <div class="content-main">
+                    <div class="jobs-grid" id="jobs-list-container">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: Job Detail -->
+        <section id="view-job-detail" class="view">
+            <div class="container" style="padding: 40px 0;">
+                <button class="btn btn-text mb-4" onclick="app.navigate('jobs')"><i class="fa-solid fa-arrow-left"></i> Retour aux offres</button>
+                <div class="layout-sidebar reverse">
+                    <div class="content-main">
+                        <div class="job-detail-header card">
+                            <div id="job-detail-company-logo" class="company-logo-large"></div>
+                            <div>
+                                <h1 id="job-detail-title">Titre de l'offre</h1>
+                                <p id="job-detail-company" class="text-muted">Nom Entreprise</p>
+                                <div class="job-tags mt-2">
+                                    <span class="tag"><i class="fa-solid fa-location-dot"></i> <span id="job-detail-location">Lieu</span></span>
+                                    <span class="tag"><i class="fa-solid fa-file-contract"></i> <span id="job-detail-contract">Contrat</span></span>
+                                    <span class="tag"><i class="fa-solid fa-money-bill"></i> <span id="job-detail-salary">Salaire</span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="job-detail-body card mt-4">
+                            <h2>Description du poste</h2>
+                            <p id="job-detail-description"></p>
+                            
+                            <h3 class="mt-4">Vos responsabilités</h3>
+                            <ul id="job-detail-responsibilities" class="styled-list"></ul>
+                            
+                            <h3 class="mt-4">Profil recherché</h3>
+                            <ul id="job-detail-profile" class="styled-list"></ul>
+
+                            <h3 class="mt-4">Compétences</h3>
+                            <div id="job-detail-skills" class="skills-container"></div>
+                        </div>
+                    </div>
+                    <aside class="sidebar">
+                        <div class="card action-card">
+                            <button class="btn btn-primary btn-block btn-large mb-3" onclick="alert('Candidature envoyée avec succès ! (Simulation)')">Postuler maintenant</button>
+                            <button class="btn btn-outline btn-block"><i class="fa-regular fa-bookmark"></i> Sauvegarder</button>
+                            <hr class="my-4">
+                            <p class="text-sm text-muted">Publié le: <strong id="job-detail-date"></strong></p>
+                            <p class="text-sm text-muted">Expire le: <strong id="job-detail-expires"></strong></p>
+                        </div>
+                        <div class="card mt-4">
+                            <h3>À propos de l'entreprise</h3>
+                            <p id="job-detail-company-desc" class="text-sm mt-2"></p>
+                            <a href="#" class="link-primary text-sm mt-2 d-inline-block">Voir le profil <i class="fa-solid fa-arrow-right"></i></a>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: Auth / Login / Register -->
+        <section id="view-auth" class="view">
+            <div class="auth-container">
+                <div class="auth-card card">
+                    <div class="auth-tabs">
+                        <button class="auth-tab active" onclick="app.switchAuthTab('login')">Connexion</button>
+                        <button class="auth-tab" onclick="app.switchAuthTab('register')">Inscription</button>
+                    </div>
+                    
+                    <div id="auth-login" class="auth-form-container active">
+                        <h2>Bon retour !</h2>
+                        <form onsubmit="event.preventDefault(); app.login();">
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" required value="jb.mvondo@gmail.com">
+                            </div>
+                            <div class="form-group">
+                                <label>Mot de passe</label>
+                                <input type="password" required value="password123">
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
+                        </form>
+                        <div class="demo-logins mt-4">
+                            <p class="text-sm text-center text-muted mb-2">Comptes de démo :</p>
+                            <button class="btn btn-outline btn-sm btn-block mb-2" onclick="app.login('candidat')">Connexion Candidat</button>
+                            <button class="btn btn-outline btn-sm btn-block" onclick="app.login('entreprise')">Connexion Entreprise</button>
+                        </div>
+                    </div>
+
+                    <div id="auth-register" class="auth-form-container">
+                        <h2>Créer un compte</h2>
+                        <div class="role-selector mb-4">
+                            <label><input type="radio" name="role" value="candidat" checked> Candidat</label>
+                            <label><input type="radio" name="role" value="entreprise"> Entreprise</label>
+                        </div>
+                        <form onsubmit="event.preventDefault(); alert('Inscription réussie (Simulation)'); app.login('candidat');">
+                            <div class="form-group">
+                                <label>Nom complet / Raison sociale</label>
+                                <input type="text" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Mot de passe</label>
+                                <input type="password" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">S'inscrire</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: Candidate Dashboard -->
+        <section id="view-dashboard-candidat" class="view dashboard-layout">
+            <aside class="dashboard-sidebar">
+                <div class="user-profile-summary">
+                    <div class="avatar" id="cand-avatar">JB</div>
+                    <h3 id="cand-name">Nom</h3>
+                    <p class="text-muted text-sm" id="cand-title">Titre</p>
+                </div>
+                <nav class="dash-nav">
+                    <a href="#" class="active"><i class="fa-solid fa-table-columns"></i> Vue d'ensemble</a>
+                    <a href="#"><i class="fa-solid fa-user"></i> Mon Profil</a>
+                    <a href="#"><i class="fa-solid fa-briefcase"></i> Mes Candidatures</a>
+                    <a href="#"><i class="fa-solid fa-bookmark"></i> Sauvegardes</a>
+                    <a href="#" onclick="app.logout()"><i class="fa-solid fa-right-from-bracket"></i> Déconnexion</a>
+                </nav>
+            </aside>
+            <div class="dashboard-content">
+                <h2>Tableau de bord Candidat</h2>
+                
+                <div class="dash-stats-grid mt-4">
+                    <div class="dash-stat card">
+                        <h4>Candidatures</h4>
+                        <div class="val" id="cand-app-count">0</div>
+                    </div>
+                    <div class="dash-stat card">
+                        <h4>Sauvegardes</h4>
+                        <div class="val" id="cand-saved-count">0</div>
+                    </div>
+                    <div class="dash-stat card">
+                        <h4>Profil complété</h4>
+                        <div class="val" id="cand-completeness">0%</div>
+                        <div class="progress-bar mt-2"><div class="progress" style="width: 82%"></div></div>
+                    </div>
+                </div>
+
+                <h3 class="mt-5 mb-3">Candidatures récentes</h3>
+                <div class="card p-0 overflow-hidden">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Poste</th>
+                                <th>Entreprise</th>
+                                <th>Date</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cand-applications-list">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: Company Dashboard -->
+        <section id="view-dashboard-entreprise" class="view dashboard-layout">
+            <aside class="dashboard-sidebar">
+                <div class="user-profile-summary">
+                    <div class="avatar" id="comp-avatar" style="background: #00C896;">TAS</div>
+                    <h3 id="comp-name">Entreprise</h3>
+                    <p class="text-muted text-sm" id="comp-sector">Secteur</p>
+                </div>
+                <nav class="dash-nav">
+                    <a href="#" class="active"><i class="fa-solid fa-table-columns"></i> Vue d'ensemble</a>
+                    <a href="#"><i class="fa-solid fa-plus-circle"></i> Créer une offre</a>
+                    <a href="#"><i class="fa-solid fa-briefcase"></i> Gérer les offres</a>
+                    <a href="#"><i class="fa-solid fa-users"></i> Candidatures</a>
+                    <a href="#" onclick="app.logout()"><i class="fa-solid fa-right-from-bracket"></i> Déconnexion</a>
+                </nav>
+            </aside>
+            <div class="dashboard-content">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2>Espace Recruteur</h2>
+                    <button class="btn btn-primary"><i class="fa-solid fa-plus"></i> Nouvelle Offre</button>
+                </div>
+                
+                <div class="dash-stats-grid">
+                    <div class="dash-stat card">
+                        <h4>Offres Actives</h4>
+                        <div class="val" id="comp-active-offers">0</div>
+                    </div>
+                    <div class="dash-stat card">
+                        <h4>Candidatures (Total)</h4>
+                        <div class="val" id="comp-total-apps">0</div>
+                    </div>
+                    <div class="dash-stat card">
+                        <h4>Nouveaux (7j)</h4>
+                        <div class="val" id="comp-new-apps">0</div>
+                    </div>
+                </div>
+
+                <div class="layout-grid-2 mt-5">
+                    <div>
+                        <h3 class="mb-3">Vos offres récentes</h3>
+                        <div class="card p-0 overflow-hidden">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Titre</th>
+                                        <th>Candidats</th>
+                                        <th>Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="comp-offers-list">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="mb-3">Dernières candidatures reçues</h3>
+                        <div class="card p-0 overflow-hidden">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Candidat</th>
+                                        <th>Poste</th>
+                                        <th>Match</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="comp-recent-apps">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-col">
+                <div class="logo"><i class="fa-solid fa-briefcase"></i> Work-Kam</div>
+                <p class="mt-3 text-muted">Plateforme de placement du personnel. Mise en relation Candidats & Entreprises au Cameroun.</p>
+                <div class="social-links mt-3">
+                    <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+                    <a href="#"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#"><i class="fa-brands fa-twitter"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Candidats</h4>
+                <ul>
+                    <li><a href="#" onclick="app.navigate('jobs')">Offres d'emploi</a></li>
+                    <li><a href="#" onclick="app.navigate('auth')">Créer un profil</a></li>
+                    <li><a href="#">Conseils CV</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Entreprises</h4>
+                <ul>
+                    <li><a href="#" onclick="app.navigate('auth', {type: 'entreprise'})">Publier une offre</a></li>
+                    <li><a href="#">Cvthèque</a></li>
+                    <li><a href="#">Tarifs</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Work-Kam</h4>
+                <ul>
+                    <li><a href="#">À propos</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">Mentions légales</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom text-center mt-5 pt-4 border-top">
+            <p class="text-muted">&copy; 2026 Work-Kam. Conçu par <a href="https://petchcrea.com" target="_blank" style="color:#00C896;">PetchCrea</a>.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
